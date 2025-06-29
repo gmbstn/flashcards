@@ -8,7 +8,7 @@
       body { background-color: #121212; color: #fff; font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
       .flashcard { border: 1px solid #333; background: #1e1e1e; padding: 30px; margin: 20px auto; border-radius: 12px; cursor: pointer; width: 300px; }
       .flashcard:hover { background: #222; }
-      button { background-color: #007bff; color: #fff; border: none; margin: 5px; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+      button { background-color: #007bff; color: #fff; border: none; margin: 5px; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 18px; }
       button:hover { background-color: #0056b3; }
       .controls { margin-top: 20px; }
       h1 { font-size: 2rem; }
@@ -38,7 +38,7 @@
             path: `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}`
           });
         }).then(response => {
-          flashcards = response.result.values.slice(1);
+          flashcards = response.result.values.slice(1); // skip header row
           showFlashcard();
         }, error => {
           console.error(error);
@@ -75,7 +75,7 @@
         showFlashcard();
       });
 
-      gapi.load(\"client\", loadClient);
+      gapi.load("client", loadClient);
     </script>
   </body>
 </html>
