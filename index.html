@@ -24,9 +24,10 @@
         font-size: 24px;
         margin-bottom: 10px;
         font-weight: bold;
+        cursor: pointer;
       }
       .separator {
-        height: 2px;
+        height: 1px; /* half as thin */
         background-color: #007bff;
         margin: 15px auto;
         width: 80%;
@@ -37,14 +38,15 @@
         color: #121212;
         padding: 10px 20px;
         font-size: 20px;
-        transition: transform 0.6s, background-color 0.6s, color 0.6s;
-        transform-style: preserve-3d;
-        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        width: 80%;
+        margin: 0 auto;
       }
-      .portuguese-card.flipped {
+      .portuguese-card.visible {
         background-color: #121212;
         color: #007bff;
-        transform: rotateY(180deg);
+        opacity: 1;
       }
       button {
         background-color: #007bff;
@@ -73,7 +75,7 @@
     <div class="flashcard-box">
       <div id="english-word" class="english-word">Loading...</div>
       <div class="separator"></div>
-      <div id="portuguese-card" class="portuguese-card">Click to reveal</div>
+      <div id="portuguese-card" class="portuguese-card">Portuguese</div>
     </div>
     <div class="controls">
       <button id="prev">⬅️</button>
@@ -114,17 +116,20 @@
         const portugueseCard = document.getElementById('portuguese-card');
 
         englishWord.innerText = question;
-        portugueseCard.innerText = 'Click to reveal';
-        portugueseCard.classList.remove('flipped');
-        portugueseCard.onclick = () => {
-          portugueseCard.classList.toggle('flipped');
-          if (portugueseCard.classList.contains('flipped')) {
-            portugueseCard.innerText = answer;
-          } else {
-            portugueseCard.innerText = 'Click to reveal';
-          }
-        };
+        portugueseCard.innerText = answer;
+        portugueseCard.classList.remove('visible');
       }
+
+      // Click to reveal with fade
+      document.getElementById('portuguese-card').addEventListener('click', () => {
+        document.getElementById('portuguese-card').classList.add('visible');
+      });
+
+      // Click English word = go to next
+      document.getElementById('english-word').addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % flashcards.length;
+        showFlashcard();
+      });
 
       document.getElementById('next').addEventListener('click', () => {
         currentIndex = (currentIndex + 1) % flashcards.length;
