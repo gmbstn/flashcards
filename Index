@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Flashcards from Google Sheets</title>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <style>
+      body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+      .flashcard { border: 1px solid #ccc; padding: 20px; margin: 20px; border-radius: 8px; cursor: pointer; display: inline-block; width: 300px; }
+    </style>
+  </head>
+  <body>
+    <h1>Flashcards</h1>
+    <div id="flashcard">Loading...</div>
+    <button id="next">Next</button>
+
+    <script>
+      const SHEET_ID = '1Jb_MbdGdlb24dzBwGERLu4ro8yG7iRmt9iki01aUuPo';
+      const API_KEY = 'AIzaSyBI854qdvpwzufU54QF4GPmyt5ded7TA4Q';
+      const RANGE = 'Sheet1!A:B';
+
+      let flashcards = [];
+      let currentIndex = 0;
+
+      function loadClient() {
+        gapi.client.init({ apiKey: API_KEY }).then(() => {
+          return gapi.client.request({
+            path: `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}`
+          });
+        }).then(response => {
+          flashcards = response.result.values.slice(1);
+          showFlashcard();
+        }, error => {
+          console.error(error);
+          document.getElementById("flashcard").innerText = "Error loading flashcards.";
+        });
+      }
+
+      function showFlashcard() {
+        if (flashcards.length === 0) return;
+        const [question, answer] = flashcards[currentIndex];
+        const card = document.getElementById("flashcard");
+        card.innerText = question;
+        card.onclick = () => { card.innerText = answer; };
+      }
+
+      document.getElementById("next").addEventListener("click", () => {
+        currentIndex = (currentIndex + 1) % flashcards.length;
+        showFlashcard();
+      });
+
+      gapi.load("client", loadClient);
+    </script>
+  </body>
+</html>
