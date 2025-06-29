@@ -9,16 +9,20 @@
         background-color: #121212;
         color: #fff;
         font-family: Arial, sans-serif;
-        text-align: center;
-        margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
       }
       .flashcard-box {
         border: 2px solid #007bff;
         border-radius: 12px;
         padding: 40px 20px;
-        margin: 40px auto;
         background-color: #1e1e1e;
         width: 320px;
+        text-align: center;
       }
       .english-word {
         font-size: 24px;
@@ -42,23 +46,25 @@
         margin-top: 20px;
         width: 80%;
         height: 50px;
+        line-height: 50px;
         color: #007bff;
         cursor: pointer;
-        overflow: hidden;
         transition: background-color 0.3s, color 0.3s;
+        white-space: nowrap;
       }
       .portuguese-button.revealed {
         background-color: #007bff;
         color: #fff;
       }
       .controls {
-        margin-top: 40px;
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
       }
       button.control-button {
         background-color: #007bff;
         color: #fff;
         border: none;
-        margin: 10px;
         padding: 10px 20px;
         border-radius: 8px;
         cursor: pointer;
@@ -69,7 +75,7 @@
       }
       h1 {
         font-size: 2rem;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
       }
     </style>
   </head>
@@ -78,7 +84,7 @@
     <div class="flashcard-box">
       <div id="english-word" class="english-word">Loading...</div>
       <div class="separator"></div>
-      <button id="portuguese-button" class="portuguese-button"></button>
+      <button id="portuguese-button" class="portuguese-button">&nbsp;</button>
     </div>
     <div class="controls">
       <button id="prev" class="control-button">⬅️</button>
@@ -129,7 +135,7 @@
 
         englishWord.innerText = question;
         portugueseButton.classList.remove('revealed');
-        portugueseButton.innerText = ""; // keep height consistent with blank
+        portugueseButton.innerHTML = "&nbsp;";
       }
 
       document.getElementById('portuguese-button').addEventListener('click', () => {
