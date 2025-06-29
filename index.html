@@ -91,6 +91,13 @@
       let flashcards = [];
       let currentIndex = 0;
 
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
       function loadClient() {
         gapi.client.init({ apiKey: API_KEY }).then(() => {
           return gapi.client.request({
@@ -99,6 +106,7 @@
         }).then(
           (response) => {
             flashcards = response.result.values.slice(1);
+            shuffleArray(flashcards); // shuffle once on load
             showFlashcard();
           },
           (error) => {
@@ -120,12 +128,10 @@
         portugueseCard.classList.remove('visible');
       }
 
-      // Click to reveal with fade
       document.getElementById('portuguese-card').addEventListener('click', () => {
         document.getElementById('portuguese-card').classList.add('visible');
       });
 
-      // Click English word = go to next
       document.getElementById('english-word').addEventListener('click', () => {
         currentIndex = (currentIndex + 1) % flashcards.length;
         showFlashcard();
@@ -142,7 +148,8 @@
       });
 
       document.getElementById('shuffle').addEventListener('click', () => {
-        currentIndex = Math.floor(Math.random() * flashcards.length);
+        shuffleArray(flashcards);
+        currentIndex = 0;
         showFlashcard();
       });
 
