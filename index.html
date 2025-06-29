@@ -2,17 +2,26 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Flashcards from Google Sheets</title>
+    <title>Fun with Words</title>
     <script src="https://apis.google.com/js/api.js"></script>
     <style>
-      body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-      .flashcard { border: 1px solid #ccc; padding: 20px; margin: 20px; border-radius: 8px; cursor: pointer; display: inline-block; width: 300px; }
+      body { background-color: #121212; color: #fff; font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+      .flashcard { border: 1px solid #333; background: #1e1e1e; padding: 30px; margin: 20px auto; border-radius: 12px; cursor: pointer; width: 300px; }
+      .flashcard:hover { background: #222; }
+      button { background-color: #007bff; color: #fff; border: none; margin: 5px; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+      button:hover { background-color: #0056b3; }
+      .controls { margin-top: 20px; }
+      h1 { font-size: 2rem; }
     </style>
   </head>
   <body>
-    <h1>Flashcards</h1>
+    <h1>🇺🇸 Fun with Words 🇧🇷</h1>
     <div id="flashcard">Loading...</div>
-    <button id="next">Next</button>
+    <div class="controls">
+      <button id="prev">⬅️</button>
+      <button id="shuffle">🔀</button>
+      <button id="next">➡️</button>
+    </div>
 
     <script>
       const SHEET_ID = '1Jb_MbdGdlb24dzBwGERLu4ro8yG7iRmt9iki01aUuPo';
@@ -21,6 +30,7 @@
 
       let flashcards = [];
       let currentIndex = 0;
+      let showingAnswer = false;
 
       function loadClient() {
         gapi.client.init({ apiKey: API_KEY }).then(() => {
@@ -40,16 +50,32 @@
         if (flashcards.length === 0) return;
         const [question, answer] = flashcards[currentIndex];
         const card = document.getElementById("flashcard");
-        card.innerText = question;
-        card.onclick = () => { card.innerText = answer; };
+        card.innerText = showingAnswer ? answer : question;
+        card.onclick = () => {
+          showingAnswer = !showingAnswer;
+          showFlashcard();
+        };
       }
 
       document.getElementById("next").addEventListener("click", () => {
         currentIndex = (currentIndex + 1) % flashcards.length;
+        showingAnswer = false;
         showFlashcard();
       });
 
-      gapi.load("client", loadClient);
+      document.getElementById("prev").addEventListener("click", () => {
+        currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
+        showingAnswer = false;
+        showFlashcard();
+      });
+
+      document.getElementById("shuffle").addEventListener("click", () => {
+        currentIndex = Math.floor(Math.random() * flashcards.length);
+        showingAnswer = false;
+        showFlashcard();
+      });
+
+      gapi.load(\"client\", loadClient);
     </script>
   </body>
 </html>
