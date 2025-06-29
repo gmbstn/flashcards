@@ -5,18 +5,59 @@
     <title>Fun with Words</title>
     <script src="https://apis.google.com/js/api.js"></script>
     <style>
-      body { background-color: #121212; color: #fff; font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-      .flashcard { border: 1px solid #333; background: #1e1e1e; padding: 30px; margin: 20px auto; border-radius: 12px; cursor: pointer; width: 300px; }
-      .flashcard:hover { background: #222; }
-      button { background-color: #007bff; color: #fff; border: none; margin: 5px; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 18px; }
-      button:hover { background-color: #0056b3; }
-      .controls { margin-top: 20px; }
-      h1 { font-size: 2rem; }
+      body {
+        background-color: #121212;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+      }
+      .flashcard-box {
+        border: 2px solid #007bff;
+        border-radius: 12px;
+        padding: 40px 20px;
+        margin: 40px auto;
+        background-color: #1e1e1e;
+        width: 320px;
+      }
+      .word {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #121212;
+        border: 2px solid #007bff;
+        border-radius: 12px;
+        font-weight: bold;
+        color: #007bff;
+        cursor: pointer;
+      }
+      button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        margin: 10px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 18px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .controls {
+        margin-top: 40px;
+      }
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 40px;
+      }
     </style>
   </head>
   <body>
     <h1>🇺🇸 Fun with Words 🇧🇷</h1>
-    <div id="flashcard">Loading...</div>
+    <div class="flashcard-box">
+      <div id="word" class="word">Loading...</div>
+    </div>
     <div class="controls">
       <button id="prev">⬅️</button>
       <button id="shuffle">🔀</button>
@@ -38,20 +79,22 @@
             path: `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}`
           });
         }).then(response => {
-          flashcards = response.result.values.slice(1); // skip header row
+          flashcards = response.result.values.slice(1);
           showFlashcard();
         }, error => {
           console.error(error);
-          document.getElementById("flashcard").innerText = "Error loading flashcards.";
+          document.getElementById("word").innerText = "Error loading flashcards.";
         });
       }
 
       function showFlashcard() {
         if (flashcards.length === 0) return;
         const [question, answer] = flashcards[currentIndex];
-        const card = document.getElementById("flashcard");
-        card.innerText = showingAnswer ? answer : question;
-        card.onclick = () => {
+        const wordElement = document.getElementById("word");
+        wordElement.innerText = showingAnswer ? answer : question;
+        wordElement.style.color = showingAnswer ? "#007bff" : "#007bff";
+        wordElement.style.fontWeight = showingAnswer ? "normal" : "bold";
+        wordElement.onclick = () => {
           showingAnswer = !showingAnswer;
           showFlashcard();
         };
@@ -75,7 +118,7 @@
         showFlashcard();
       });
 
-      gapi.load("client", loadCliend);
+      gapi.load("client", loadClient);
     </script>
   </body>
 </html>
