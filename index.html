@@ -25,27 +25,27 @@
         margin-bottom: 10px;
         font-weight: bold;
         cursor: pointer;
+        color: #007bff;
       }
       .separator {
-        height: 1px; /* half as thin */
+        height: 1px;
         background-color: #007bff;
         margin: 15px auto;
         width: 80%;
       }
       .portuguese-card {
-        background-color: #000;
+        background-color: #121212;
+        border: 1px solid #007bff;
         border-radius: 12px;
-        color: #121212;
+        color: #007bff;
         padding: 10px 20px;
-        font-size: 20px;
+        font-size: 24px;
         opacity: 0;
         transition: opacity 0.5s ease-in-out;
         width: 80%;
         margin: 0 auto;
       }
       .portuguese-card.visible {
-        background-color: #121212;
-        color: #007bff;
         opacity: 1;
       }
       button {
@@ -106,7 +106,7 @@
         }).then(
           (response) => {
             flashcards = response.result.values.slice(1);
-            shuffleArray(flashcards); // shuffle once on load
+            shuffleArray(flashcards);
             showFlashcard();
           },
           (error) => {
