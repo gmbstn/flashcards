@@ -22,7 +22,7 @@
       }
       .english-word {
         font-size: 24px;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
         font-weight: bold;
         cursor: pointer;
         color: #007bff;
@@ -35,24 +35,26 @@
       }
       .portuguese-button {
         border: 1px solid #007bff;
-        border-radius: 8px;
+        border-radius: 12px;
         background-color: transparent;
-        color: #007bff;
         font-size: 24px;
-        margin-top: 15px;
-        padding: 10px;
+        font-weight: bold;
+        margin-top: 20px;
         width: 80%;
+        height: 50px;
+        color: #007bff;
         cursor: pointer;
+        overflow: hidden;
         transition: background-color 0.3s, color 0.3s;
       }
-      .portuguese-button:hover {
+      .portuguese-button.revealed {
         background-color: #007bff;
         color: #fff;
       }
       .controls {
         margin-top: 40px;
       }
-      button {
+      button.control-button {
         background-color: #007bff;
         color: #fff;
         border: none;
@@ -62,7 +64,7 @@
         cursor: pointer;
         font-size: 18px;
       }
-      button:hover {
+      button.control-button:hover {
         background-color: #0056b3;
       }
       h1 {
@@ -79,10 +81,10 @@
       <button id="portuguese-button" class="portuguese-button"></button>
     </div>
     <div class="controls">
-      <button id="prev">⬅️</button>
-      <button id="shuffle">🔀</button>
-      <button id="speak">🔊</button>
-      <button id="next">➡️</button>
+      <button id="prev" class="control-button">⬅️</button>
+      <button id="shuffle" class="control-button">🔀</button>
+      <button id="speak" class="control-button">🔊</button>
+      <button id="next" class="control-button">➡️</button>
     </div>
 
     <script>
@@ -126,12 +128,14 @@
         const portugueseButton = document.getElementById('portuguese-button');
 
         englishWord.innerText = question;
-        portugueseButton.innerText = "";
+        portugueseButton.classList.remove('revealed');
+        portugueseButton.innerText = ""; // keep height consistent with blank
       }
 
       document.getElementById('portuguese-button').addEventListener('click', () => {
         const portugueseButton = document.getElementById('portuguese-button');
         portugueseButton.innerText = flashcards[currentIndex][1];
+        portugueseButton.classList.add('revealed');
       });
 
       document.getElementById('english-word').addEventListener('click', () => {
