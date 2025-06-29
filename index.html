@@ -2,30 +2,36 @@
 <html>
   <head>
     <meta charset="UTF-8" />
+    <!-- Responsive meta tag to make scaling work on mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fun with Words</title>
     <script src="https://apis.google.com/js/api.js"></script>
     <style>
+      /* Core page layout: dark background, centered vertically + horizontally */
       body {
         background-color: #121212;
         color: #fff;
         font-family: Arial, sans-serif;
-        display: flex;
+        display: flex; /* enable flex layout */
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        height: 100vh; /* full viewport height */
         margin: 0;
       }
+
+      /* Flashcard container box */
       .flashcard-box {
         border: 2px solid #007bff;
         border-radius: 12px;
         padding: 40px 20px;
         background-color: #1e1e1e;
-        width: 80%;
-        max-width: 320px;
+        width: 80%;         /* responsive width on smaller screens */
+        max-width: 320px;   /* max size for larger screens */
         text-align: center;
       }
+
+      /* English word styling */
       .english-word {
         font-size: 24px;
         margin-bottom: 20px;
@@ -33,12 +39,16 @@
         cursor: pointer;
         color: #007bff;
       }
+
+      /* horizontal separator line between the english and portuguese */
       .separator {
         height: 1px;
         background-color: #007bff;
         margin: 15px auto;
         width: 80%;
       }
+
+      /* button to reveal portuguese translation */
       .portuguese-button {
         border: 1px solid #007bff;
         border-radius: 12px;
@@ -48,21 +58,23 @@
         margin-top: 20px;
         width: 80%;
         height: 50px;
-        line-height: 50px;
+        line-height: 50px; /* vertically center the text */
         color: #007bff;
         cursor: pointer;
         transition: background-color 0.3s, color 0.3s;
-        white-space: nowrap;
+        white-space: nowrap; /* avoid breaking the word onto two lines */
       }
       .portuguese-button.revealed {
         background-color: #007bff;
         color: #fff;
       }
+
+      /* controls button row below the flashcard box */
       .controls {
-        margin-top: 60px;
+        margin-top: 60px; /* consistent spacing */
         display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
+        gap: 10px; /* even spacing between the buttons */
+        flex-wrap: wrap; /* allow wrap on small screens */
         justify-content: center;
       }
       button.control-button {
@@ -77,21 +89,23 @@
       button.control-button:hover {
         background-color: #0056b3;
       }
+
+      /* page title style */
       h1 {
         font-size: 2rem;
-        margin-bottom: 60px;
+        margin-bottom: 60px; /* large distance from flashcard box */
       }
 
-      /* MEDIA QUERY for better mobile scaling */
+      /* MEDIA QUERY for phones and small screens */
       @media (max-width: 480px) {
         .english-word,
         .portuguese-button {
-          font-size: 6vw; /* scales text relative to screen width */
-          height: 12vw;   /* scales button height */
+          font-size: 6vw;   /* scale fonts based on viewport width */
+          height: 12vw;
           line-height: 12vw;
         }
         button.control-button {
-          padding: 2vw 4vw;
+          padding: 2vw 4vw; /* more touch-friendly buttons */
           font-size: 5vw;
         }
         h1 {
@@ -102,12 +116,19 @@
     </style>
   </head>
   <body>
+    <!-- page title -->
     <h1>🇺🇸 Fun with Words 🇧🇷</h1>
+
+    <!-- flashcard block -->
     <div class="flashcard-box">
+      <!-- main word shown -->
       <div id="english-word" class="english-word">Loading...</div>
       <div class="separator"></div>
+      <!-- hidden Portuguese word revealed on click -->
       <button id="portuguese-button" class="portuguese-button">&nbsp;</button>
     </div>
+
+    <!-- navigation buttons -->
     <div class="controls">
       <button id="prev" class="control-button">⬅️</button>
       <button id="shuffle" class="control-button">🔀</button>
@@ -116,13 +137,15 @@
     </div>
 
     <script>
+      // Google Sheets API info
       const SHEET_ID = '1Jb_MbdGdlb24dzBwGERLu4ro8yG7iRmt9iki01aUuPo';
       const API_KEY = 'AIzaSyBI854qdvpwzufU54QF4GPmyt5ded7TA4Q';
       const RANGE = 'Sheet1!A:B';
 
-      let flashcards = [];
-      let currentIndex = 0;
+      let flashcards = [];  // stores all the pairs
+      let currentIndex = 0; // index of current word
 
+      // shuffle array function
       function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -130,6 +153,7 @@
         }
       }
 
+      // load the spreadsheet data from Google
       function loadClient() {
         gapi.client.init({ apiKey: API_KEY }).then(() => {
           return gapi.client.request({
@@ -137,7 +161,7 @@
           });
         }).then(
           (response) => {
-            flashcards = response.result.values.slice(1);
+            flashcards = response.result.values.slice(1); // skip header row
             shuffleArray(flashcards);
             showFlashcard();
           },
@@ -148,45 +172,46 @@
         );
       }
 
+      // display current flashcard
       function showFlashcard() {
         if (flashcards.length === 0) return;
         const [question, answer] = flashcards[currentIndex];
-
         const englishWord = document.getElementById('english-word');
         const portugueseButton = document.getElementById('portuguese-button');
-
         englishWord.innerText = question;
         portugueseButton.classList.remove('revealed');
-        portugueseButton.innerHTML = "&nbsp;";
+        portugueseButton.innerHTML = "&nbsp;"; // placeholder to keep size
       }
 
+      // reveal Portuguese word
       document.getElementById('portuguese-button').addEventListener('click', () => {
         const portugueseButton = document.getElementById('portuguese-button');
         portugueseButton.innerText = flashcards[currentIndex][1];
         portugueseButton.classList.add('revealed');
       });
 
+      // clicking the English word also goes to next
       document.getElementById('english-word').addEventListener('click', () => {
         currentIndex = (currentIndex + 1) % flashcards.length;
         showFlashcard();
       });
 
+      // navigation buttons
       document.getElementById('next').addEventListener('click', () => {
         currentIndex = (currentIndex + 1) % flashcards.length;
         showFlashcard();
       });
-
       document.getElementById('prev').addEventListener('click', () => {
         currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
         showFlashcard();
       });
-
       document.getElementById('shuffle').addEventListener('click', () => {
         shuffleArray(flashcards);
         currentIndex = 0;
         showFlashcard();
       });
 
+      // speak button (female voice)
       document.getElementById('speak').addEventListener('click', () => {
         const utterance = new SpeechSynthesisUtterance(flashcards[currentIndex][0]);
         const voices = speechSynthesis.getVoices();
@@ -200,6 +225,7 @@
         speechSynthesis.speak(utterance);
       });
 
+      // load the Google Sheets API
       gapi.load('client', loadClient);
     </script>
   </body>
