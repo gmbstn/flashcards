@@ -40,12 +40,14 @@
         color: #007bff;
         padding: 10px 20px;
         font-size: 24px;
+        visibility: hidden;
         opacity: 0;
         transition: opacity 0.5s ease-in-out;
         width: 80%;
         margin: 0 auto;
       }
       .portuguese-card.visible {
+        visibility: visible;
         opacity: 1;
       }
       button {
@@ -80,6 +82,7 @@
     <div class="controls">
       <button id="prev">⬅️</button>
       <button id="shuffle">🔀</button>
+      <button id="speak">🔊</button>
       <button id="next">➡️</button>
     </div>
 
@@ -124,12 +127,16 @@
         const portugueseCard = document.getElementById('portuguese-card');
 
         englishWord.innerText = question;
+
         portugueseCard.innerText = answer;
         portugueseCard.classList.remove('visible');
+        portugueseCard.style.visibility = 'hidden';
+        portugueseCard.style.opacity = '0';
       }
 
       document.getElementById('portuguese-card').addEventListener('click', () => {
-        document.getElementById('portuguese-card').classList.add('visible');
+        const portugueseCard = document.getElementById('portuguese-card');
+        portugueseCard.classList.add('visible');
       });
 
       document.getElementById('english-word').addEventListener('click', () => {
@@ -151,6 +158,20 @@
         shuffleArray(flashcards);
         currentIndex = 0;
         showFlashcard();
+      });
+
+      document.getElementById('speak').addEventListener('click', () => {
+        const utterance = new SpeechSynthesisUtterance(
+          flashcards[currentIndex][0]
+        );
+        // Try to select a female voice
+        const voices = speechSynthesis.getVoices();
+        const female = voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('samantha') || v.name.toLowerCase().includes('karen'));
+        if (female) {
+          utterance.voice = female;
+        }
+        utterance.lang = 'en-US';
+        speechSynthesis.speak(utterance);
       });
 
       gapi.load('client', loadClient);
