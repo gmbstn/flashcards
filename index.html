@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fun with Words</title>
     <script src="https://apis.google.com/js/api.js"></script>
     <style>
@@ -21,7 +22,8 @@
         border-radius: 12px;
         padding: 40px 20px;
         background-color: #1e1e1e;
-        width: 320px;
+        width: 80%;
+        max-width: 320px;
         text-align: center;
       }
       .english-word {
@@ -57,9 +59,11 @@
         color: #fff;
       }
       .controls {
-        margin-top: 60px; /* consistent and larger distance from flashcard box */
+        margin-top: 60px;
         display: flex;
-        gap: 10px; /* equal gap between buttons */
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
       }
       button.control-button {
         background-color: #007bff;
@@ -75,7 +79,25 @@
       }
       h1 {
         font-size: 2rem;
-        margin-bottom: 60px; /* doubled distance from h1 to flashcard box */
+        margin-bottom: 60px;
+      }
+
+      /* MEDIA QUERY for better mobile scaling */
+      @media (max-width: 480px) {
+        .english-word,
+        .portuguese-button {
+          font-size: 6vw; /* scales text relative to screen width */
+          height: 12vw;   /* scales button height */
+          line-height: 12vw;
+        }
+        button.control-button {
+          padding: 2vw 4vw;
+          font-size: 5vw;
+        }
+        h1 {
+          font-size: 7vw;
+          margin-bottom: 8vw;
+        }
       }
     </style>
   </head>
@@ -135,7 +157,7 @@
 
         englishWord.innerText = question;
         portugueseButton.classList.remove('revealed');
-        portugueseButton.innerHTML = "&nbsp;"; // consistent height
+        portugueseButton.innerHTML = "&nbsp;";
       }
 
       document.getElementById('portuguese-button').addEventListener('click', () => {
