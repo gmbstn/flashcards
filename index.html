@@ -161,7 +161,11 @@
           });
         }).then(
           (response) => {
-            flashcards = response.result.values.slice(1); // skip header row
+            // 🔥 FILTER OUT EMPTY-COLUMN-A ROWS:
+            flashcards = response.result.values
+              .slice(1)                                 // skip header row
+              .filter(row => row[0] && row[0].trim());  // only rows where A isn’t blank
+
             shuffleArray(flashcards);
             showFlashcard();
           },
