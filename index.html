@@ -2,11 +2,9 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <!-- Responsive meta tag -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fun with Words</title>
     <style>
-      /* Center page content, dark theme */
       body {
         background-color: #121212;
         color: #fff;
@@ -18,7 +16,7 @@
         height: 100vh;
         margin: 0;
       }
-      /* Flashcard container */
+
       .flashcard-box {
         border: 2px solid #007bff;
         border-radius: 12px;
@@ -28,26 +26,36 @@
         max-width: 320px;
         text-align: center;
       }
+
       .english-word {
         font-size: 24px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         font-weight: bold;
         cursor: pointer;
         color: #007bff;
       }
+
+      .example-sentence {
+        font-size: 0.8rem;
+        font-style: italic;
+        color: #66b2ff;
+        margin-bottom: 10px;
+      }
+
       .separator {
         height: 1px;
         background-color: #007bff;
         margin: 15px auto;
         width: 80%;
       }
+
       .portuguese-button {
         border: 1px solid #007bff;
         border-radius: 12px;
         background-color: transparent;
         font-size: 24px;
         font-weight: bold;
-        margin-top: 20px;
+        margin-top: 10px;
         width: 80%;
         height: 50px;
         line-height: 50px;
@@ -56,10 +64,12 @@
         transition: background-color 0.3s, color 0.3s;
         white-space: nowrap;
       }
+
       .portuguese-button.revealed {
         background-color: #007bff;
         color: #fff;
       }
+
       .controls {
         margin-top: 60px;
         display: flex;
@@ -67,6 +77,7 @@
         flex-wrap: wrap;
         justify-content: center;
       }
+
       button.control-button {
         background-color: #007bff;
         color: #fff;
@@ -76,13 +87,16 @@
         cursor: pointer;
         font-size: 18px;
       }
+
       button.control-button:hover {
         background-color: #0056b3;
       }
+
       h1 {
         font-size: 2rem;
         margin-bottom: 60px;
       }
+
       @media (max-width: 480px) {
         .english-word,
         .portuguese-button {
@@ -90,13 +104,19 @@
           height: 12vw;
           line-height: 12vw;
         }
+
         button.control-button {
           padding: 2vw 4vw;
           font-size: 5vw;
         }
+
         h1 {
           font-size: 7vw;
           margin-bottom: 8vw;
+        }
+
+        .example-sentence {
+          font-size: 3vw;
         }
       }
     </style>
@@ -105,6 +125,7 @@
     <h1>🇺🇸 Fun with Words 🇧🇷</h1>
     <div class="flashcard-box">
       <div id="english-word" class="english-word">Loading...</div>
+      <div id="example-sentence" class="example-sentence"></div>
       <div class="separator"></div>
       <button id="portuguese-button" class="portuguese-button">&nbsp;</button>
     </div>
@@ -116,13 +137,11 @@
     </div>
 
     <script>
-      // Published CSV URL (no API key needed)
       const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRzQ3bKLKQeXx1OcHvGouVnwW65gf21xrtTUz8ocvB-rIcATRxjFpcPiy09NSMeGHtDuFXErySPe2Wp/pub?gid=0&single=true&output=csv';
 
       let flashcards = [];
       let currentIndex = 0;
 
-      // Fisher–Yates shuffle
       function shuffleArray(arr) {
         for (let i = arr.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -130,7 +149,6 @@
         }
       }
 
-      // Load and parse CSV
       function loadClient() {
         fetch(CSV_URL)
           .then(r => r.text())
@@ -140,8 +158,8 @@
               .split(/\r?\n/)
               .map(line => line.split(',').map(cell => cell.trim()));
             flashcards = rows
-              .slice(1) // skip header
-              .filter(row => row[0] !== '') // only keep rows with column A
+              .slice(1)
+              .filter(row => row[0] !== '');
             shuffleArray(flashcards);
             showFlashcard();
           })
@@ -151,46 +169,43 @@
           });
       }
 
-      // Display current card
       function showFlashcard() {
         if (!flashcards.length) return;
-        const [question, answer] = flashcards[currentIndex];
-        const engEl = document.getElementById('english-word');
+        const [english, portuguese, example] = flashcards[currentIndex];
+        document.getElementById('english-word').innerText = english;
+        document.getElementById('example-sentence').innerText = example || '';
         const porBtn = document.getElementById('portuguese-button');
-        engEl.innerText = question;
         porBtn.classList.remove('revealed');
         porBtn.innerHTML = "&nbsp;";
       }
 
-      // Reveal Portuguese on click
       document.getElementById('portuguese-button').addEventListener('click', () => {
         const btn = document.getElementById('portuguese-button');
         btn.innerText = flashcards[currentIndex][1] || '';
         btn.classList.add('revealed');
       });
 
-      // Click English to next
       document.getElementById('english-word').addEventListener('click', () => {
         currentIndex = (currentIndex + 1) % flashcards.length;
         showFlashcard();
       });
 
-      // Navigation buttons
       document.getElementById('next').addEventListener('click', () => {
         currentIndex = (currentIndex + 1) % flashcards.length;
         showFlashcard();
       });
+
       document.getElementById('prev').addEventListener('click', () => {
         currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
         showFlashcard();
       });
+
       document.getElementById('shuffle').addEventListener('click', () => {
         shuffleArray(flashcards);
         currentIndex = 0;
         showFlashcard();
       });
 
-      // Speak English word
       document.getElementById('speak').addEventListener('click', () => {
         const utter = new SpeechSynthesisUtterance(flashcards[currentIndex][0]);
         const voices = speechSynthesis.getVoices();
@@ -200,7 +215,6 @@
         speechSynthesis.speak(utter);
       });
 
-      // Initialize
       loadClient();
     </script>
   </body>
